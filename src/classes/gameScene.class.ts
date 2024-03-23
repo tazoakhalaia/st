@@ -23,7 +23,7 @@ export class GameScene {
 
   drawScene() {
     this.scene.background = new THREE.Color("white");
-    this.camera.position.set(-2, 40, 50);
+    this.camera.position.set(-2, 8, 10);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
   }
@@ -31,6 +31,9 @@ export class GameScene {
   animate() {
     requestAnimationFrame(this.animate.bind(this));
     this.orbit.update();
+    if (this.plane.mixer) {
+      this.plane.mixer.update(0.01);
+    }
     this.renderer.render(this.scene, this.camera);
   }
 

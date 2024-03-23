@@ -1,5 +1,7 @@
 import {
   AmbientLight,
+  AnimationMixer,
+  DirectionalLight,
   DoubleSide,
   Mesh,
   MeshBasicMaterial,
@@ -7,21 +9,29 @@ import {
   PlaneGeometry,
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { FBXLoader } from "three/examples/jsm/Addons.js";
 
 export class Plane {
   private planeGeometry = new PlaneGeometry(50, 50);
   private _container = new Object3D();
   private loader = new GLTFLoader();
+  private fxbLoader = new FBXLoader();
   private grassInstances: any[] = [];
+  private _mixer: any;
 
   get container() {
     this.init();
     return this._container;
   }
+
+  get mixer() {
+    return this._mixer;
+  }
   init() {
     this.createPlane();
     this.createGrass();
     this.createAmbientLight();
+    this.createCharacter();
   }
 
   createPlane = () => {
@@ -33,8 +43,20 @@ export class Plane {
   };
 
   createAmbientLight = () => {
-    const ambient = new AmbientLight("green", 30);
-    this._container.add(ambient);
+    const direct = new DirectionalLight("white", 10);
+    const ambient = new AmbientLight("white", 0.5);
+    this._container.add(ambient, direct);
+  };
+
+  createCharacter = () => {
+    this.fxbLoader.load("models/character.fbx", (model) => {
+      const character = model;
+      this._mixer = new AnimationMixer(character);
+      const action = this._mixer.clipAction(model.animations[0]);
+      action.play();
+      character.scale.set(0.03, 0.03, 0.03);
+      this._container.add(character);
+    });
   };
 
   createGrass = () => {
