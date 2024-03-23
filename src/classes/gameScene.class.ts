@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { Plane } from "./plane.class";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 export class GameScene {
   private plane = new Plane();
@@ -11,6 +12,8 @@ export class GameScene {
     1000
   );
   private renderer = new THREE.WebGLRenderer();
+  private orbit = new OrbitControls(this.camera, this.renderer.domElement);
+
   init() {
     this.drawScene();
     this.animate();
@@ -20,13 +23,14 @@ export class GameScene {
 
   drawScene() {
     this.scene.background = new THREE.Color("white");
-    this.camera.position.set(-2, 10, 50);
+    this.camera.position.set(-2, 40, 50);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
   }
 
   animate() {
     requestAnimationFrame(this.animate.bind(this));
+    this.orbit.update();
     this.renderer.render(this.scene, this.camera);
   }
 
