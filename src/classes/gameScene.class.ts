@@ -1,9 +1,11 @@
 import * as THREE from "three";
 import { Plane } from "./plane.class";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { Dragon } from "./dragon.class";
 
 export class GameScene {
   private plane = new Plane();
+  private dragon =  new Dragon()
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(
     75,
@@ -17,9 +19,17 @@ export class GameScene {
   init() {
     this.drawScene();
     this.animate();
-    this.scene.add(this.plane.container);
+    this.createLigth()
+    this.scene.add(this.plane.container,this.dragon.container);
     window.addEventListener("resize", () => this.resize());
   }
+
+  createLigth = () => {
+    const direct = new THREE.DirectionalLight("white", 10);
+    const ambient = new THREE.AmbientLight("white", 0.5);
+    this.scene.add(ambient, direct);
+  };
+
 
   drawScene() {
     this.scene.background = new THREE.Color("white");
@@ -31,9 +41,6 @@ export class GameScene {
   animate() {
     requestAnimationFrame(this.animate.bind(this));
     this.orbit.update();
-    if (this.plane.mixer) {
-      this.plane.mixer.update(0.01);
-    }
     this.renderer.render(this.scene, this.camera);
   }
 
